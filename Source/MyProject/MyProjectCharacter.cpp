@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Bullet.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AMyProjectCharacter
@@ -57,6 +58,8 @@ void AMyProjectCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
+	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &AMyProjectCharacter::Shoot);
+	
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMyProjectCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AMyProjectCharacter::MoveRight);
 
@@ -76,6 +79,19 @@ void AMyProjectCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AMyProjectCharacter::OnResetVR);
 }
 
+
+void AMyProjectCharacter::Shoot()
+{
+	// UE_LOG(LogTemp, Warning, TEXT("Bang Bang"));
+
+	FTransform SpawnTransform = GetActorTransform();
+	
+	SpawnTransform.SetLocation(FollowCamera->GetComponentRotation().Vector() * 200.f + GetActorLocation());
+
+	FActorSpawnParameters SpawnParameters;
+	
+	GetWorld()->SpawnActor<ABullet>(BulletBP, SpawnTransform, SpawnParameters);
+}
 
 void AMyProjectCharacter::OnResetVR()
 {
